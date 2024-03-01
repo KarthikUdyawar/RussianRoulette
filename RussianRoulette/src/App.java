@@ -6,19 +6,23 @@ import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This class implements a Russian Roulette game where a player and a virtual dealer take turns shooting
- * themselves or each other with a revolver containing one live bullet and several blanks. The game continues
+ * This class implements a Russian Roulette game where a player and a virtual
+ * dealer take turns shooting
+ * themselves or each other with a revolver containing one live bullet and
+ * several blanks. The game continues
  * until one of them loses all their lives.
  */
-public class RussianRouletteV4 {
-    // Constants for initial player and dealer lives, live shell range, and score multiplier
+public class App {
+    // Constants for initial player and dealer lives, live shell range, and score
+    // multiplier
     private static final int INITIAL_LIFE = 4;
     private static final int LIVE_SHELL_MIN = 2;
     private static final int LIVE_SHELL_MAX = 7;
     private static final int SCORE_MULTIPLIER = 100000;
 
     /**
-     * Enum representing the two types of revolver shells: live shell and blank shell.
+     * Enum representing the two types of revolver shells: live shell and blank
+     * shell.
      */
     private enum ShellType {
         LIVE_SHELL, BLANK_SHELL
@@ -66,16 +70,16 @@ public class RussianRouletteV4 {
          * @param scanner the scanner object to read input
          */
         private void setupGame(Scanner scanner) {
-            System.out.print("Enter your first name: ");
+            System.out.print("📝 Enter your first name: ");
             String name = scanner.nextLine().toLowerCase().trim();
             System.out.println();
-            System.out.print("Your signature " + name + ", if you want to participate in the game, " +
-                    "knowing that you can die: ");
+            System.out.print("✍  Your signature " + name + ", ");
+            System.out.print("⚠️  if you want to participate in the game, knowing that you can die: ");
             String waiverSigned = scanner.nextLine().toLowerCase().trim();
             System.out.println();
 
             if (!name.equals(waiverSigned)) {
-                System.out.println("Your sign doesn't match your name");
+                System.out.println("❌ Your sign doesn't match your name");
                 throw new IllegalArgumentException("Name and signature don't match.");
             }
 
@@ -83,7 +87,7 @@ public class RussianRouletteV4 {
                 godMode = true;
             }
 
-            System.out.println("Game has begun\n");
+            System.out.println("🚀 Game has begun\n");
         }
 
         /**
@@ -95,19 +99,24 @@ public class RussianRouletteV4 {
         private void playRound(Scanner scanner) throws InterruptedException {
             if (chamber.isEmpty()) {
                 roundNum++;
-                System.out.println("\nRound " + roundNum);
-                int numLiveShells = random.nextInt(LIVE_SHELL_MAX - LIVE_SHELL_MIN + 1) + LIVE_SHELL_MIN;
+                System.out.println("\n🔄 Round " + roundNum);
+                TimeUnit.SECONDS.sleep(1);
+                int numLiveShells = random.nextInt(LIVE_SHELL_MAX - LIVE_SHELL_MIN + 1)
+                        + LIVE_SHELL_MIN;
                 int numBlankShells = 8 - numLiveShells;
-                System.out.println("Live Shell(s): " + numLiveShells + ", Blank Shell(s): " + numBlankShells);
+                System.out.println("🔴 Live Shell(s): " + numLiveShells + ",🔵 Blank Shell(s): "
+                        + numBlankShells);
                 TimeUnit.SECONDS.sleep(5);
-                System.out.println("Reload Gun\n");
+                System.out.println("🔀 Shuffle shells and Reload Gun\n");
                 reloadGun(numLiveShells, numBlankShells);
             }
 
-            System.out.println("\nYour health: " + playerLife + " Dealer health: " + dealerLife + "\n");
+            TimeUnit.SECONDS.sleep(2);
+            System.out.println("\n🧑 Your health: " + "❤️".repeat(playerLife)
+                    + "   🤡 Dealer health: " + "❤️".repeat(dealerLife) + "\n");
 
             if (godMode) {
-                System.out.println(chamber + "\n"); // ! God mode
+                System.out.println("👀 " + chamber + "\n"); // ! God mode
             }
 
             String trigger = isPlayerTurn ? getPlayerTrigger(scanner) : getDealerTrigger();
@@ -127,16 +136,17 @@ public class RussianRouletteV4 {
          */
         private String getPlayerTrigger(Scanner scanner) {
             while (true) {
-                System.out.println("\nYour turn");
-                System.out.print("To shoot yourself, use key 's' or to shoot the dealer use key 'd': ");
+                System.out.println("\n🧑 Your turn");
+                System.out.print("To shoot yourself,"
+                        + " use key 's' or to shoot the dealer use key 'd': ");
                 String trigger = scanner.nextLine().toLowerCase().trim();
 
                 // Validate the input
                 if (Set.of("s", "d").contains(trigger)) {
                     return trigger;
                 } else {
-                    System.out.println(
-                            "Invalid input. Please enter 's' to shoot yourself or 'd' to shoot the dealer.");
+                    System.out.println("❌ Invalid input."
+                            + " Please enter 's' to shoot yourself or 'd' to shoot the dealer.");
                 }
             }
         }
@@ -145,9 +155,11 @@ public class RussianRouletteV4 {
          * Generates the dealer's trigger choice randomly.
          *
          * @return the dealer's trigger choice
+         * @throws InterruptedException
          */
-        private String getDealerTrigger() {
-            System.out.println("\nDealer turn");
+        private String getDealerTrigger() throws InterruptedException {
+            System.out.println("\n🤡 Dealer turn");
+            TimeUnit.SECONDS.sleep(1);
             return random.nextBoolean() ? "s" : "d";
         }
 
@@ -159,17 +171,21 @@ public class RussianRouletteV4 {
          * @throws InterruptedException if the game is interrupted
          */
         private void processShot(String trigger, ShellType currentShell) throws InterruptedException {
-            System.out.println("Gun points to " + ("s".equals(trigger) ? "you" : "the dealer"));
+            System.out.println("🔫 Gun points to "
+                    + ("s".equals(trigger) ? "you 🧑" : "the dealer 🤡"));
             TimeUnit.SECONDS.sleep(5);
             if (currentShell == ShellType.LIVE_SHELL) {
-                System.out.println("Hit! " + ("s".equals(trigger) ? "You lose one health" : "Dealer loses one health"));
+                System.out.println("💥 Hit! "
+                        + ("s".equals(trigger) ? "You lose one health 🧑" : "Dealer loses one health 🤡")
+                        + " 💔");
                 if ("s".equals(trigger)) {
                     playerLife--;
                 } else {
                     dealerLife--;
                 }
             } else {
-                System.out.println("Miss! " + ("s".equals(trigger) ? "You survived" : "The dealer survived"));
+                System.out.println("💨 Miss! "
+                        + ("s".equals(trigger) ? "You survived" : "The dealer survived"));
             }
             if ((isPlayerTurn && "d".equals(trigger)) || (!isPlayerTurn && "s".equals(trigger))) {
                 isPlayerTurn = !isPlayerTurn;
@@ -183,13 +199,14 @@ public class RussianRouletteV4 {
          */
         private void checkGameOver(Scanner scanner) {
             if (playerLife <= 0) {
-                System.out.println("\nGame over! You lost all lives");
+                System.out.println("\n💀 Game over! You lost all lives");
                 isGameOver = true;
             } else if (dealerLife <= 0) {
-                System.out.println("\nYou win! The dealer lost all lives");
+                System.out.println("\n🎉 You win! The dealer lost all lives");
                 score += playerLife * roundNum * SCORE_MULTIPLIER;
-                System.out.println("Your current score " + score);
-                System.out.println("Do you want to double your score? Enter 'y' for yes, 'n' for no: ");
+                System.out.println("💰 Your current score " + score);
+                System.out.print("🎰 Do you want to double your score?"
+                        + " Enter 'y' for yes, 'n' for no: ");
                 String userChoice = scanner.nextLine().toLowerCase().trim();
                 if ("y".equals(userChoice)) {
                     score *= 2;
@@ -205,8 +222,8 @@ public class RussianRouletteV4 {
         /**
          * Reloads the gun with the specified number of live and blank shells.
          *
-         * @param numLiveShells   the number of live shells to reload
-         * @param numBlankShells  the number of blank shells to reload
+         * @param numLiveShells  the number of live shells to reload
+         * @param numBlankShells the number of blank shells to reload
          */
         private void reloadGun(int numLiveShells, int numBlankShells) {
             chamber.clear();
