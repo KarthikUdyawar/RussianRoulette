@@ -5,16 +5,28 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 
-public class App {
+/**
+ * This class implements a Russian Roulette game where a player and a virtual dealer take turns shooting
+ * themselves or each other with a revolver containing one live bullet and several blanks. The game continues
+ * until one of them loses all their lives.
+ */
+public class RussianRouletteV4 {
+    // Constants for initial player and dealer lives, live shell range, and score multiplier
     private static final int INITIAL_LIFE = 4;
     private static final int LIVE_SHELL_MIN = 2;
     private static final int LIVE_SHELL_MAX = 7;
     private static final int SCORE_MULTIPLIER = 100000;
 
+    /**
+     * Enum representing the two types of revolver shells: live shell and blank shell.
+     */
     private enum ShellType {
         LIVE_SHELL, BLANK_SHELL
     }
 
+    /**
+     * Class representing the Russian Roulette game.
+     */
     private static class Game {
         private final Random random = new Random();
         private final Stack<ShellType> chamber = new Stack<>();
@@ -27,10 +39,18 @@ public class App {
         private boolean godMode = false;
         private final Scanner scanner;
 
+        /**
+         * Constructs a new Game instance.
+         */
         public Game() {
             this.scanner = new Scanner(System.in);
         }
 
+        /**
+         * Starts the game and continues until it is over.
+         *
+         * @throws InterruptedException if the game is interrupted
+         */
         public void play() throws InterruptedException {
             setupGame(scanner);
 
@@ -40,6 +60,11 @@ public class App {
             scanner.close();
         }
 
+        /**
+         * Sets up the game by getting the player's name and signature.
+         *
+         * @param scanner the scanner object to read input
+         */
         private void setupGame(Scanner scanner) {
             System.out.print("Enter your first name: ");
             String name = scanner.nextLine().toLowerCase().trim();
@@ -61,6 +86,12 @@ public class App {
             System.out.println("Game has begun\n");
         }
 
+        /**
+         * Plays a round of the game.
+         *
+         * @param scanner the scanner object to read input
+         * @throws InterruptedException if the game is interrupted
+         */
         private void playRound(Scanner scanner) throws InterruptedException {
             if (chamber.isEmpty()) {
                 roundNum++;
@@ -88,6 +119,12 @@ public class App {
             checkGameOver(scanner);
         }
 
+        /**
+         * Gets the player's trigger choice.
+         *
+         * @param scanner the scanner object to read input
+         * @return the player's trigger choice
+         */
         private String getPlayerTrigger(Scanner scanner) {
             while (true) {
                 System.out.println("\nYour turn");
@@ -104,11 +141,23 @@ public class App {
             }
         }
 
+        /**
+         * Generates the dealer's trigger choice randomly.
+         *
+         * @return the dealer's trigger choice
+         */
         private String getDealerTrigger() {
             System.out.println("\nDealer turn");
             return random.nextBoolean() ? "s" : "d";
         }
 
+        /**
+         * Processes the shot based on the trigger choice and the current shell.
+         *
+         * @param trigger      the trigger choice ('s' or 'd')
+         * @param currentShell the current shell type
+         * @throws InterruptedException if the game is interrupted
+         */
         private void processShot(String trigger, ShellType currentShell) throws InterruptedException {
             System.out.println("Gun points to " + ("s".equals(trigger) ? "you" : "the dealer"));
             TimeUnit.SECONDS.sleep(5);
@@ -127,6 +176,11 @@ public class App {
             }
         }
 
+        /**
+         * Checks if the game is over based on the player and dealer lives.
+         *
+         * @param scanner the scanner object to read input
+         */
         private void checkGameOver(Scanner scanner) {
             if (playerLife <= 0) {
                 System.out.println("\nGame over! You lost all lives");
@@ -148,7 +202,14 @@ public class App {
             }
         }
 
+        /**
+         * Reloads the gun with the specified number of live and blank shells.
+         *
+         * @param numLiveShells   the number of live shells to reload
+         * @param numBlankShells  the number of blank shells to reload
+         */
         private void reloadGun(int numLiveShells, int numBlankShells) {
+            chamber.clear();
             for (int i = 0; i < numLiveShells; i++) {
                 chamber.push(ShellType.LIVE_SHELL);
             }
@@ -159,6 +220,12 @@ public class App {
         }
     }
 
+    /**
+     * Main method to start the game.
+     *
+     * @param args command-line arguments (not used)
+     * @throws InterruptedException if the game is interrupted
+     */
     public static void main(String[] args) throws InterruptedException {
         new Game().play();
     }
